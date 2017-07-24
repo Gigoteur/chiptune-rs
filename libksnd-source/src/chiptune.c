@@ -31,9 +31,9 @@ struct ChiptunePlayer_t
     bool cyd_registered;
 };
 
-KLYSAPI ChiptunePlayer* KSND_CreatePlayer(int sample_rate)
+KLYSAPI ChiptunePlayer* Chiptune_CreatePlayer(int sample_rate)
 {
-	ChiptunePlayer *player = KSND_CreatePlayerUnregistered(sample_rate);
+	ChiptunePlayer *player = Chiptune_CreatePlayerUnregistered(sample_rate);
 	
 	player->cyd_registered = true;
 
@@ -48,7 +48,7 @@ KLYSAPI ChiptunePlayer* KSND_CreatePlayer(int sample_rate)
 	return player;
 }
 
-KLYSAPI ChiptunePlayer* KSND_CreatePlayerUnregistered(int sample_rate)
+KLYSAPI ChiptunePlayer* Chiptune_CreatePlayerUnregistered(int sample_rate)
 {
 	ChiptunePlayer *player = malloc(sizeof(*player));
 	
@@ -73,7 +73,7 @@ KLYSAPI ChiptunePlayer* KSND_CreatePlayerUnregistered(int sample_rate)
 	return player;
 }
 
-KLYSAPI ChiptuneSong* KSND_LoadSong(ChiptunePlayer* player, const char *path)
+KLYSAPI ChiptuneSong* Chiptune_LoadSong(ChiptunePlayer* player, const char *path)
 {
 	ChiptuneSong *song = calloc(sizeof(*song), 1);
 	
@@ -94,7 +94,7 @@ KLYSAPI ChiptuneSong* KSND_LoadSong(ChiptunePlayer* player, const char *path)
 	}
 }
 
-KLYSAPI ChiptuneSound* KSND_LoadSound(ChiptunePlayer* player, const char *path)
+KLYSAPI ChiptuneSound* Chiptune_LoadSound(ChiptunePlayer* player, const char *path)
 {
     ChiptuneSound *sound = calloc(sizeof(*sound), 1);
 	
@@ -133,7 +133,7 @@ static int RWclose(struct RWops *context)
 }
 
 
-KLYSAPI ChiptuneSong* KSND_LoadSongFromMemory(ChiptunePlayer* player, void *data, int data_size)
+KLYSAPI ChiptuneSong* Chiptune_LoadSongFromMemory(ChiptunePlayer* player, void *data, int data_size)
 {
 #ifndef USESDL_RWOPS
 	RWops *ops = calloc(sizeof(*ops), 1);
@@ -170,7 +170,7 @@ KLYSAPI ChiptuneSong* KSND_LoadSongFromMemory(ChiptunePlayer* player, void *data
 }
 
 
-KLYSAPI void KSND_FreeSong(ChiptuneSong *song)
+KLYSAPI void Chiptune_FreeSong(ChiptuneSong *song)
 {
 	int i = 0;
 	for (i = 0 ; i < CYD_WAVE_MAX_ENTRIES ; ++i)
@@ -183,22 +183,22 @@ KLYSAPI void KSND_FreeSong(ChiptuneSong *song)
 }
 
 
-KLYSAPI int KSND_GetSongLength(const ChiptuneSong *song)
+KLYSAPI int Chiptune_GetSongLength(const ChiptuneSong *song)
 {
 	return song->song.song_length;
 }
 
 
 
-KLYSAPI void KSND_SetPlayerQuality(ChiptunePlayer *player, int oversample)
+KLYSAPI void Chiptune_SetPlayerQuality(ChiptunePlayer *player, int oversample)
 {
 	cyd_set_oversampling(&player->cyd_music, oversample);
 }
 
 
-KLYSAPI void KSND_FreePlayer(ChiptunePlayer *player)
+KLYSAPI void Chiptune_FreePlayer(ChiptunePlayer *player)
 {
-	KSND_Stop(player);
+	Chiptune_Stop(player);
 	
 	if (player->cyd_registered) 
 		cyd_unregister(&player->cyd_music);
@@ -208,7 +208,7 @@ KLYSAPI void KSND_FreePlayer(ChiptunePlayer *player)
 }
 
 
-KLYSAPI void KSND_PlaySong(ChiptunePlayer *player, ChiptuneSong *song, int start_position)
+KLYSAPI void Chiptune_PlaySong(ChiptunePlayer *player, ChiptuneSong *song, int start_position)
 {
 	player->cyd_music.wavetable_entries = song->wavetable_entries;
 	cyd_set_callback(&player->cyd_music, mus_advance_tick, &player->mus_music, song->song.song_rate);
@@ -220,25 +220,15 @@ KLYSAPI void KSND_PlaySong(ChiptunePlayer *player, ChiptuneSong *song, int start
 	mus_set_song(&player->mus_music, &song->song, start_position);
 }
 
-KLYSAPI void KSND_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int start_position)
+KLYSAPI void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int start_position)
 {
-
-	/*player->cyd_sound.wavetable_entries = sound->wavetable_entries;
-	cyd_set_callback(&player->cyd_sound, mus_advance_tick, &player->mus_sound, sound->sound.song_rate);
-	mus_set_fx(&player->mus_sound, &sound->sound);
-	
-	if (song->song.num_channels > player->cyd_music.n_channels)
-		cyd_reserve_channels(&player->cyd_music, song->song.num_channels);
-	
-	mus_set_song(&player->mus_music, &song->song, start_position);*/
-
+	player->cyd_sound.wavetable_entries = sound->wavetable_entries;
     mus_trigger_instrument(&player->mus_sound, -1, &sound->sound, 0, CYD_PAN_CENTER);
-
 }
 
 
 
-KLYSAPI int KSND_FillBuffer(ChiptunePlayer *player, short int *buffer, int buffer_length)
+KLYSAPI int Chiptune_FillBuffer(ChiptunePlayer *player, short int *buffer, int buffer_length)
 {
 #ifdef NOSDL_MIXER
 	cyd_output_buffer_stereo(&player->cyd_music, (void*)buffer, buffer_length);
@@ -250,7 +240,7 @@ KLYSAPI int KSND_FillBuffer(ChiptunePlayer *player, short int *buffer, int buffe
 }
 
 
-KLYSAPI void KSND_Stop(ChiptunePlayer *player)
+KLYSAPI void Chiptune_Stop(ChiptunePlayer *player)
 {
 	mus_set_song(&player->mus_music, NULL, 0);
 	cyd_set_callback(&player->cyd_music, NULL, NULL, 1);
@@ -258,13 +248,13 @@ KLYSAPI void KSND_Stop(ChiptunePlayer *player)
 }
 
 
-KLYSAPI void KSND_Pause(ChiptunePlayer *player, int state)
+KLYSAPI void Chiptune_Pause(ChiptunePlayer *player, int state)
 {
 	cyd_pause(&player->cyd_music, state);
 }
 
 
-KLYSAPI int KSND_GetPlayPosition(ChiptunePlayer *player)
+KLYSAPI int Chiptune_GetPlayPosition(ChiptunePlayer *player)
 {
 	int song_position = 0;
 	
@@ -274,7 +264,7 @@ KLYSAPI int KSND_GetPlayPosition(ChiptunePlayer *player)
 }
 
 
-KLYSAPI void KSND_SetVolume(ChiptunePlayer *player, int volume)
+KLYSAPI void Chiptune_SetVolume(ChiptunePlayer *player, int volume)
 {
 	cyd_lock(&player->cyd_music, 1);
 	player->mus_music.volume = volume;
@@ -282,7 +272,7 @@ KLYSAPI void KSND_SetVolume(ChiptunePlayer *player, int volume)
 }
 
 
-KLYSAPI void KSND_GetVUMeters(ChiptunePlayer *player, int *dest, int n_channels)
+KLYSAPI void Chiptune_GetVUMeters(ChiptunePlayer *player, int *dest, int n_channels)
 {
 	int temp[MUS_MAX_CHANNELS];
 	mus_poll_status(&player->mus_music, NULL, NULL, NULL, NULL, temp, NULL, NULL);
@@ -290,7 +280,7 @@ KLYSAPI void KSND_GetVUMeters(ChiptunePlayer *player, int *dest, int n_channels)
 }
 
 
-KLYSAPI const ChiptuneSongInfo * KSND_GetSongInfo(ChiptuneSong *song, ChiptuneSongInfo *data)
+KLYSAPI const ChiptuneSongInfo * Chiptune_GetSongInfo(ChiptuneSong *song, ChiptuneSongInfo *data)
 {
 	static ChiptuneSongInfo buffer;
 
@@ -308,7 +298,7 @@ KLYSAPI const ChiptuneSongInfo * KSND_GetSongInfo(ChiptuneSong *song, ChiptuneSo
 }
 
 
-KLYSAPI void KSND_SetLooping(ChiptunePlayer *player, int looping)
+KLYSAPI void Chiptune_SetLooping(ChiptunePlayer *player, int looping)
 {
 	if (looping)
 		player->mus_music.flags |= MUS_NO_REPEAT;
@@ -317,7 +307,7 @@ KLYSAPI void KSND_SetLooping(ChiptunePlayer *player, int looping)
 }
 
 
-KLYSAPI int KSND_GetPlayTime(ChiptuneSong *song, int position)
+KLYSAPI int Chiptune_GetPlayTime(ChiptuneSong *song, int position)
 {
 	return mus_get_playtime_at(&song->song, position);
 }
