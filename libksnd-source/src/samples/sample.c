@@ -60,6 +60,4 @@ int main(int argc, char *argv[]) {
 	Chiptune_FreeSong(song);
 		
 	return 0;
-
-    return 0;
 }
