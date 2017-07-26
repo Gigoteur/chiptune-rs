@@ -1,6 +1,6 @@
 #include "chiptune.h"
-#include "snd/music.h"
-#include "snd/cyd.h"
+#include "music.h"
+#include "cyd.h"
 #include "macros.h"
 #include <stdbool.h>
 #include <stdlib.h>

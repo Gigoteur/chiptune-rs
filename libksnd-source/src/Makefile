@@ -8,30 +8,17 @@ RANLIB= ranlib
 RM= rm -f
 
 SDLFLAGS = `sdl2-config --cflags` -U_FORTIFY_SOURCE
-INCLUDEFLAGS= $(SDLFLAGS) -I ./ -I src/snd $(EXTFLAGS)
-CFLAGS += -O3 -Wall ${INCLUDEFLAGS} -s -D USESDLMUTEXES -D STEREOOUTPUT -D LOWRESWAVETABLE# -D NOSDL_MIXER
+INCLUDEFLAGS= $(SDLFLAGS) -I ./
+CFLAGS += -O3 -Wall ${INCLUDEFLAGS} -s -D USESDLMUTEXES -D STEREOOUTPUT -D LOWRESWAVETABLE
 
-chiptune_SRC = $(notdir ${wildcard *.c})
-chiptune_DEP = $(patsubst %.c, %.d, ${chiptune_SRC})
-chiptune_OBJ = $(patsubst %.c, objs/%.o, ${chiptune_SRC})
+all: libchiptune.a
 
-snd_SRC = $(notdir ${wildcard snd/*.c})
-snd_DEP = $(patsubst %.c, snd_%.d, ${snd_SRC})
-snd_OBJ = $(patsubst %.c, objs/snd_%.o, ${snd_SRC})
-
-all: libchiptune.a sample
-
-libchiptune.a: ${chiptune_OBJ} ${snd_OBJ}
+libchiptune.a: chiptune.o cyd.o cydchr.o cydcrush.o cydentry.o cydflt.o cydfm.o cydfx.o cydosc.o cydrvb.o cydwave.o freqs.o music.o pack.o
 	@$(ECHO) "Linking libchiptune..."
 	@$(AR) $@ $^
 	@$(RANLIB) $@
 
-objs/%.o: %.c 
-	@$(ECHO) "Compiling "$(notdir $<)"..."
-	@$(MKDIR) -p objs
-	$(CC) -c $(CFLAGS) -o $@ $<
-
-objs/snd_%.o: snd/%.c 
+%.o: %.c 
 	@$(ECHO) "Compiling "$(notdir $<)"..."
 	@$(MKDIR) -p objs
 	$(CC) -c $(CFLAGS) -o $@ $<
@@ -41,4 +28,4 @@ sample: libchiptune.a
 	$(CC) -o samples/sample samples/sample.o libchiptune.a -lSDL2 -lSDL2_Mixer
 
 clean:
-	rm -fr libchiptune.a objs/ samples/sample.o samples/sample
+	rm -fr libchiptune.a *.o samples/sample.o samples/sample
