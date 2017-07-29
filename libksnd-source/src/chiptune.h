@@ -140,6 +140,7 @@ KLYSAPI extern void Chiptune_FreePlayer(ChiptunePlayer *player);
  * Start playing song @c song from position @c start_position (measured in pattern rows)
  */
 KLYSAPI extern void Chiptune_PlaySong(ChiptunePlayer *player, ChiptuneSong *song, int start_position);
+KLYSAPI extern void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int start_position);
 
 /**
  * Stop playback on a player context.

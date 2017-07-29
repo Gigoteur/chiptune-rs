@@ -4,7 +4,7 @@ extern crate libc;
 extern crate sdl2;
 
 use std::ffi::{CString, CStr};
-use libc::{c_void, c_int, c_char};
+use libc::c_int;
 use sdl2::mixer;
 
 #[allow(non_snake_case)]
@@ -15,6 +15,11 @@ pub struct Chiptune {
 #[allow(non_snake_case)]
 pub struct ChiptuneSong {
   S: ffi::chiptune_song,
+}
+
+#[allow(non_snake_case)]
+pub struct ChiptuneSound {
+  S: ffi::chiptune_sound,
 }
 
 impl Chiptune {
@@ -46,6 +51,19 @@ impl Chiptune {
   pub fn play_song(&mut self, song: ChiptuneSong, start_position: c_int) {
     unsafe {
       ffi::Chiptune_PlaySong(self.P, song.S, start_position);
+    }
+  }
+
+  pub fn load_sound(&mut self, path: String) -> ChiptuneSound {
+    unsafe {
+      let path = CString::new(path).unwrap();
+      ChiptuneSound { S: ffi::Chiptune_LoadSound(self.P, path.as_ptr()) }
+    }
+  }
+
+  pub fn play_sound(&mut self, sound: ChiptuneSound, start_position: c_int) {
+    unsafe {
+      ffi::Chiptune_PlaySound(self.P, sound.S, start_position);
     }
   }
 
