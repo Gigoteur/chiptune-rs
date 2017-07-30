@@ -48,7 +48,7 @@ impl Chiptune {
     }
   }
 
-  pub fn play_song(&mut self, song: ChiptuneSong, start_position: c_int) {
+  pub fn play_song(&mut self, song: &mut ChiptuneSong, start_position: c_int) {
     unsafe {
       ffi::Chiptune_PlaySong(self.P, song.S, start_position);
     }
