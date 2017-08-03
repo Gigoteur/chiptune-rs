@@ -12,4 +12,11 @@ extern {
   pub fn Chiptune_PlaySong(player: chiptune_player, son: chiptune_song,  start_position: c_int);
   pub fn Chiptune_LoadSound(player: chiptune_player, path: *const c_char) -> chiptune_sound;
   pub fn Chiptune_PlaySound(player: chiptune_player, sound: chiptune_sound,  start_position: c_int);
+  pub fn Chiptune_Stop(player: chiptune_player);
+  pub fn Chiptune_Pause(player: chiptune_player, state: c_int);
+  pub fn Chiptune_SetPlayerQuality(player: chiptune_player, oversample: c_int);
+  pub fn Chiptune_SetVolume(player: chiptune_player, volume: c_int);
+  pub fn Chiptune_SetLooping(player: chiptune_player, looping: c_int);
+  pub fn Chiptune_GetPlayPosition(player: chiptune_player) -> c_int;
+  pub fn Chiptune_GetSongInfo(player: chiptune_player) -> c_int;
 }
