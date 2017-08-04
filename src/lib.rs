@@ -4,7 +4,7 @@ extern crate libc;
 extern crate sdl2;
 
 use std::ffi::CString;
-use libc::c_int;
+use libc::{c_int, c_ushort};
 use sdl2::mixer;
 
   #[derive(Debug)]
@@ -27,6 +27,11 @@ pub struct ChiptuneSong {
 pub struct ChiptuneSound {
   S: ffi::chiptune_sound,
 }
+
+pub use ffi::{
+  CYD_PAN_CENTER, CYD_PAN_LEFT, CYD_PAN_RIGHT
+};
+
 
 impl Chiptune {
   pub fn new() -> Chiptune {
@@ -77,9 +82,9 @@ impl Chiptune {
     }
   }
 
-  pub fn play_sound(&mut self, sound: ChiptuneSound, start_position: c_int) {
+  pub fn play_sound(&mut self, sound: ChiptuneSound, chan: c_int, note: c_ushort, panning: c_int) {
     unsafe {
-      ffi::Chiptune_PlaySound(self.P, sound.S, start_position);
+      ffi::Chiptune_PlaySound(self.P, sound.S, chan, note, panning);
     }
   }
 
