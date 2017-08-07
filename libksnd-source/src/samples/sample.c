@@ -1,4 +1,5 @@
 #include "chiptune.h"
+#include "music.h"
 
 #include <SDL2/SDL_mixer.h>
 
@@ -28,13 +29,14 @@ int main(int argc, char *argv[]) {
 	printf("[E] Play Song\n");
 
     printf("Load Sound\n");
-    sound = Chiptune_LoadSound(player, "./assets/sounds/clap.ki");
+    sound = Chiptune_LoadSound(player, "./assets/sounds/the_horror.ki");
     printf("[E] Load Sound %x\n", sound);
+    Chiptune_GetSoundInfo(sound);
 
-	sleep(2);
+	sleep(1);
 
     printf("Play Sound\n");	
-	Chiptune_PlaySound(player, sound, 0);
+	Chiptune_PlaySound(player, sound, -1, 10000, CYD_PAN_CENTER);
 	printf("[E] Play Sound\n");
 
     sleep(5);

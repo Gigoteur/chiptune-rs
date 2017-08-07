@@ -7,10 +7,10 @@ use std::ffi::CString;
 use libc::{c_int, c_ushort};
 use sdl2::mixer;
 
-  #[derive(Debug)]
-  pub enum ChiptuneError {
-      LoadingError,
-  }
+#[derive(Debug)]
+pub enum ChiptuneError {
+    LoadingError,
+}
 
 
 #[allow(non_snake_case)]
@@ -23,9 +23,10 @@ pub struct ChiptuneSong {
   S: ffi::chiptune_song,
 }
 
+#[derive(Clone, Copy)]
 #[allow(non_snake_case)]
 pub struct ChiptuneSound {
-  S: ffi::chiptune_sound,
+  pub S: ffi::chiptune_sound,
 }
 
 pub use ffi::{
@@ -127,4 +128,16 @@ impl Chiptune {
       return ffi::Chiptune_GetPlayPosition(self.P);
     }
   }
+
+  pub fn get_sound_program(&mut self, sound: ChiptuneSound) -> [u16; 32] {
+    let mut program: [u16; 32] = [0; 32];
+    
+    unsafe {
+        for i in 0..32 {
+          program[i] = (*sound.S).program[i];
+        }
+    }
+    program
+  }
+  
 }

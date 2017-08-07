@@ -220,12 +220,22 @@ KLYSAPI void Chiptune_PlaySong(ChiptunePlayer *player, ChiptuneSong *song, int s
 	mus_set_song(&player->mus_music, &song->song, start_position);
 }
 
-KLYSAPI void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int chan, Uint16 note, int paning)
+KLYSAPI void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int chan, unsigned short note, int panning)
 {
-	player->cyd_sound.wavetable_entries = sound->wavetable_entries;
+	//player->cyd_sound.wavetable_entries = sound->wavetable_entries;
     mus_trigger_instrument(&player->mus_sound, chan, &sound->sound, note, panning);
 }
 
+
+KLYSAPI void Chiptune_GetSoundInfo(ChiptuneSound *sound) {
+	printf("SOUND INFO\n");
+	printf("NAME %s\n", sound->sound.name);
+	int i = 0;
+
+	for (i=0; i < MUS_PROG_LEN; i++) {
+		printf("PROGRAM[%d] 0x%x\n", i, sound->sound.program[i]);
+	}
+}
 
 
 KLYSAPI int Chiptune_FillBuffer(ChiptunePlayer *player, short int *buffer, int buffer_length)
