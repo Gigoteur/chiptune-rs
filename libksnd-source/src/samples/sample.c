@@ -31,7 +31,6 @@ int main(int argc, char *argv[]) {
     printf("Load Sound\n");
     sound = Chiptune_LoadSound(player, "./assets/sounds/the_horror.ki");
     printf("[E] Load Sound %x\n", sound);
-    Chiptune_GetSoundInfo(sound);
 
 	sleep(1);
 
@@ -45,19 +44,21 @@ int main(int argc, char *argv[]) {
 
     Chiptune_SetVolume(player, 10);
 
+    printf("Pause sound\n");	
+	Chiptune_Pause(player, 1);
     sleep(5);
+    printf("Resume sound\n");	
+	Chiptune_Pause(player, 0);
 
     Chiptune_SetVolume(player, 128);
 
-    printf("Pause\n");	
-	Chiptune_Pause(player, 1);
-	
-	sleep(2);
-	
-	Chiptune_Pause(player, 0);
-	
-	sleep(1);
-		
+	sleep(5);
+
+    Chiptune_Stop(player);
+    printf("Stop sound\n");	
+
+    sleep(1);
+
 	Chiptune_FreePlayer(player);
 	Chiptune_FreeSong(song);
 		

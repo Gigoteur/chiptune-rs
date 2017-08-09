@@ -226,18 +226,6 @@ KLYSAPI void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, in
     mus_trigger_instrument(&player->mus_sound, chan, &sound->sound, note, panning);
 }
 
-
-KLYSAPI void Chiptune_GetSoundInfo(ChiptuneSound *sound) {
-	printf("SOUND INFO\n");
-	printf("NAME %s\n", sound->sound.name);
-	int i = 0;
-
-	for (i=0; i < MUS_PROG_LEN; i++) {
-		printf("PROGRAM[%d] 0x%x\n", i, sound->sound.program[i]);
-	}
-}
-
-
 KLYSAPI int Chiptune_FillBuffer(ChiptunePlayer *player, short int *buffer, int buffer_length)
 {
 #ifdef NOSDL_MIXER
@@ -255,12 +243,43 @@ KLYSAPI void Chiptune_Stop(ChiptunePlayer *player)
 	mus_set_song(&player->mus_music, NULL, 0);
 	cyd_set_callback(&player->cyd_music, NULL, NULL, 1);
 	player->cyd_music.wavetable_entries = NULL;
+
+	mus_set_song(&player->mus_sound, NULL, 0);
+	cyd_set_callback(&player->cyd_sound, NULL, NULL, 1);
+	player->cyd_sound.wavetable_entries = NULL;
 }
+
+KLYSAPI void Chiptune_StopMusic(ChiptunePlayer *player)
+{
+	mus_set_song(&player->mus_music, NULL, 0);
+	cyd_set_callback(&player->cyd_music, NULL, NULL, 1);
+	player->cyd_music.wavetable_entries = NULL;
+}
+
+
+KLYSAPI void Chiptune_StopSound(ChiptunePlayer *player)
+{
+	mus_set_song(&player->mus_sound, NULL, 0);
+	cyd_set_callback(&player->cyd_sound, NULL, NULL, 1);
+	player->cyd_sound.wavetable_entries = NULL;
+}
+
 
 
 KLYSAPI void Chiptune_Pause(ChiptunePlayer *player, int state)
 {
 	cyd_pause(&player->cyd_music, state);
+	cyd_pause(&player->cyd_sound, state);
+}
+
+KLYSAPI void Chiptune_PauseMusic(ChiptunePlayer *player, int state)
+{
+	cyd_pause(&player->cyd_music, state);
+}
+
+KLYSAPI void Chiptune_PauseSound(ChiptunePlayer *player, int state)
+{
+	cyd_pause(&player->cyd_sound, state);
 }
 
 

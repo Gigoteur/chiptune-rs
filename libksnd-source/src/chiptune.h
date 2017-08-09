@@ -148,6 +148,8 @@ KLYSAPI void Chiptune_GetSoundInfo(ChiptuneSound *sound);
  * Stop playback on a player context.
  */
 KLYSAPI extern void Chiptune_Stop(ChiptunePlayer* player);
+KLYSAPI extern void Chiptune_StopMusic(ChiptunePlayer* player);
+KLYSAPI extern void Chiptune_StopSound(ChiptunePlayer* player);
 
 /**
  * Pause or continue playback on a player context.
@@ -159,6 +161,8 @@ KLYSAPI extern void Chiptune_Stop(ChiptunePlayer* player);
  *
  */
 KLYSAPI extern void Chiptune_Pause(ChiptunePlayer *player, int state);
+KLYSAPI extern void Chiptune_PauseMusic(ChiptunePlayer *player, int state);
+KLYSAPI extern void Chiptune_PauseSound(ChiptunePlayer *player, int state);
 
 /**
  * Fill a buffer of 16-bit signed integers with audio. Data will be interleaved for stereo audio.

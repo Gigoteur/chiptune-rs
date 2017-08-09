@@ -119,10 +119,6 @@ impl Chiptune {
     }
   }
 
-  pub fn println_song(&mut self, song: &mut ChiptuneSong) {
-    println!("POSITION = {:?}", self.get_position());
-  }
-
   pub fn get_position(&mut self) -> c_int {
     unsafe {
       return ffi::Chiptune_GetPlayPosition(self.P);
