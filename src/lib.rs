@@ -53,10 +53,10 @@ impl Chiptune {
     }
   }
 
-  pub fn load_song(&mut self, path: String) -> Result<ChiptuneSong, ChiptuneError> {
+  pub fn load_music(&mut self, path: String) -> Result<ChiptuneSong, ChiptuneError> {
     unsafe {
       let path = CString::new(path).unwrap();
-      let s = ffi::Chiptune_LoadSong(self.P, path.as_ptr());
+      let s = ffi::Chiptune_LoadMusic(self.P, path.as_ptr());
       if s.is_null() {
         Err(ChiptuneError::LoadingError)
       } else {
@@ -65,9 +65,9 @@ impl Chiptune {
     }
   }
 
-  pub fn play_song(&mut self, song: &mut ChiptuneSong, start_position: c_int) {
+  pub fn play_music(&mut self, song: &mut ChiptuneSong, start_position: c_int) {
     unsafe {
-      ffi::Chiptune_PlaySong(self.P, song.S, start_position);
+      ffi::Chiptune_PlayMusic(self.P, song.S, start_position);
     }
   }
 
@@ -89,15 +89,39 @@ impl Chiptune {
     }
   }
 
-  pub fn stop_song(&mut self) {
-    unsafe {
+  pub fn stop(&mut self) {
+   unsafe {
       ffi::Chiptune_Stop(self.P);
     }
   }
 
-  pub fn pause_song(&mut self, state: c_int) {
+  pub fn stop_music(&mut self) {
+    unsafe {
+      ffi::Chiptune_StopMusic(self.P);
+    }
+  }
+
+  pub fn stop_sound(&mut self) {
+    unsafe {
+      ffi::Chiptune_StopSound(self.P);
+    }
+  }
+  
+  pub fn pause(&mut self, state: c_int) {
     unsafe {
       ffi::Chiptune_Pause(self.P, state);
+    }
+  }
+  
+  pub fn pause_music(&mut self, state: c_int) {
+    unsafe {
+      ffi::Chiptune_PauseMusic(self.P, state);
+    }
+  }
+
+  pub fn pause_sound(&mut self, state: c_int) {
+    unsafe {
+      ffi::Chiptune_PauseSound(self.P, state);
     }
   }
 

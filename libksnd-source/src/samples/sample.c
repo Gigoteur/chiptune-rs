@@ -20,13 +20,13 @@ int main(int argc, char *argv[]) {
 	player = Chiptune_CreatePlayer(44100);
 	printf("[E] CREATE PLAYER\n");
 
-    printf("Load Song\n");
-	song = Chiptune_LoadSong(player, "./assets/ringmod.kt");
-    printf("[E] Load Song\n");
+    printf("Load Music\n");
+	song = Chiptune_LoadMusic(player, "./assets/ringmod.kt");
+    printf("[E] Load Music\n");
 
-    printf("Play Song\n");	
-	Chiptune_PlaySong(player, song, 0);
-	printf("[E] Play Song\n");
+    printf("Play Music\n");	
+	Chiptune_PlayMusic(player, song, 0);
+	printf("[E] Play Music\n");
 
     printf("Load Sound\n");
     sound = Chiptune_LoadSound(player, "./assets/sounds/the_horror.ki");

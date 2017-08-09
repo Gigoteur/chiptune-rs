@@ -73,7 +73,7 @@ KLYSAPI ChiptunePlayer* Chiptune_CreatePlayerUnregistered(int sample_rate)
 	return player;
 }
 
-KLYSAPI ChiptuneSong* Chiptune_LoadSong(ChiptunePlayer* player, const char *path)
+KLYSAPI ChiptuneSong* Chiptune_LoadMusic(ChiptunePlayer* player, const char *path)
 {
 	ChiptuneSong *song = calloc(sizeof(*song), 1);
 	
@@ -133,7 +133,7 @@ static int RWclose(struct RWops *context)
 }
 
 
-KLYSAPI ChiptuneSong* Chiptune_LoadSongFromMemory(ChiptunePlayer* player, void *data, int data_size)
+KLYSAPI ChiptuneSong* Chiptune_LoadMusicFromMemory(ChiptunePlayer* player, void *data, int data_size)
 {
 #ifndef USESDL_RWOPS
 	RWops *ops = calloc(sizeof(*ops), 1);
@@ -208,7 +208,7 @@ KLYSAPI void Chiptune_FreePlayer(ChiptunePlayer *player)
 }
 
 
-KLYSAPI void Chiptune_PlaySong(ChiptunePlayer *player, ChiptuneSong *song, int start_position)
+KLYSAPI void Chiptune_PlayMusic(ChiptunePlayer *player, ChiptuneSong *song, int start_position)
 {
 	player->cyd_music.wavetable_entries = song->wavetable_entries;
 	cyd_set_callback(&player->cyd_music, mus_advance_tick, &player->mus_music, song->song.song_rate);

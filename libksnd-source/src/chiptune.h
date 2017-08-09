@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 /**
- * Song instance created by Chiptune_LoadSong() and Chiptune_LoadSongFromMemory()
+ * Song instance created by Chiptune_LoadMusic() and Chiptune_LoadSongFromMemory()
  *
  * Use Chiptune_FreeSong() to free.
  */
@@ -55,7 +55,7 @@ typedef struct
  * @param path path to the klystrack song to be loaded
  * @return @c ChiptuneSong or @c NULL if there was an error.
  */
-KLYSAPI extern ChiptuneSong * Chiptune_LoadSong(ChiptunePlayer* player, const char *path);
+KLYSAPI extern ChiptuneSong * Chiptune_LoadMusic(ChiptunePlayer* player, const char *path);
 KLYSAPI extern ChiptuneSound * Chiptune_LoadSound(ChiptunePlayer* player, const char *path);
 
 /**
@@ -66,7 +66,7 @@ KLYSAPI extern ChiptuneSound * Chiptune_LoadSound(ChiptunePlayer* player, const 
  * @param data_size size of data pointed by @a data
  * @return @c ChiptuneSong or @c NULL if there was an error.
  */
-KLYSAPI extern ChiptuneSong * Chiptune_LoadSongFromMemory(ChiptunePlayer* player, void *data, int data_size);
+KLYSAPI extern ChiptuneSong * Chiptune_LoadMusicFromMemory(ChiptunePlayer* player, void *data, int data_size);
 
 /**
  * Free memory reserved for a @c ChiptuneSong instance
@@ -139,7 +139,7 @@ KLYSAPI extern void Chiptune_FreePlayer(ChiptunePlayer *player);
 /**
  * Start playing song @c song from position @c start_position (measured in pattern rows)
  */
-KLYSAPI extern void Chiptune_PlaySong(ChiptunePlayer *player, ChiptuneSong *song, int start_position);
+KLYSAPI extern void Chiptune_PlayMusic(ChiptunePlayer *player, ChiptuneSong *song, int start_position);
 KLYSAPI extern void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int chan, unsigned short note, int panning);
 
 KLYSAPI void Chiptune_GetSoundInfo(ChiptuneSound *sound);
