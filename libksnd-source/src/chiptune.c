@@ -320,7 +320,8 @@ KLYSAPI const ChiptuneSongInfo * Chiptune_GetSongInfo(ChiptuneSong *song, Chiptu
 	data->n_instruments = song->song.num_instruments;
 	data->n_channels = song->song.num_channels;
 	
-	for (int i = 0 ; i < data->n_instruments ; ++i)
+	int i = 0;
+	for (i = 0 ; i < data->n_instruments ; ++i)
 		data->instrument_name[i] = song->song.instrument[i].name;
 		
 	return data;
