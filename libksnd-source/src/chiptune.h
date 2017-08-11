@@ -214,7 +214,8 @@ KLYSAPI extern void Chiptune_SetLooping(ChiptunePlayer *player, int looping);
  * @param player player context which is currently playing a song set with Chiptune_PlaySong()
  * @return current playback position measured in pattern rows
  */
-KLYSAPI extern int Chiptune_GetPlayPosition(ChiptunePlayer* player);
+KLYSAPI extern int Chiptune_GetMusicPlayPosition(ChiptunePlayer* player);
+KLYSAPI extern int Chiptune_GetSoundPlayPosition(ChiptunePlayer* player);
 
 /**
  * Get the current envelope values for each player channel.

@@ -23,27 +23,32 @@ int main(int argc, char *argv[]) {
     printf("Load Music\n");
 	song = Chiptune_LoadMusic(player, "./assets/ringmod.kt");
     printf("[E] Load Music\n");
-
+/*
     printf("Play Music\n");	
 	Chiptune_PlayMusic(player, song, 0);
 	printf("[E] Play Music\n");
-
+*/
     printf("Load Sound\n");
     sound = Chiptune_LoadSound(player, "./assets/sounds/the_horror.ki");
     printf("[E] Load Sound %x\n", sound);
 
 	sleep(1);
+    printf("MUSIC POSITION %d\n", Chiptune_GetMusicPlayPosition(player));
 
     printf("Play Sound\n");	
 	Chiptune_PlaySound(player, sound, -1, 10000, CYD_PAN_CENTER);
 	printf("[E] Play Sound\n");
+    printf("SOUND POSITION %d\n", Chiptune_GetSoundPlayPosition(player));
+    
+    printf("SOUND POSITION %d\n", Chiptune_GetSoundPlayPosition(player));
+    
+    sleep(1);
 
-    sleep(5);
-	
-    printf("Change volume\n");	
+    printf("Change volume\n");	    
+    Chiptune_SetVolume(player, 64);    
 
-    Chiptune_SetVolume(player, 10);
-
+    printf("SOUND POSITION %d\n", Chiptune_GetSoundPlayPosition(player));
+    
     printf("Pause sound\n");	
 	Chiptune_Pause(player, 1);
     sleep(5);

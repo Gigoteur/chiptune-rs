@@ -69,7 +69,8 @@ extern {
   pub fn Chiptune_SetPlayerQuality(player: chiptune_player, oversample: c_int);
   pub fn Chiptune_SetVolume(player: chiptune_player, volume: c_int);
   pub fn Chiptune_SetLooping(player: chiptune_player, looping: c_int);
-  pub fn Chiptune_GetPlayPosition(player: chiptune_player) -> c_int;
+  pub fn Chiptune_GetMusicPlayPosition(player: chiptune_player) -> c_int;
+  pub fn Chiptune_GetSoundPlayPosition(player: chiptune_player) -> c_int;
   pub fn Chiptune_GetSongInfo(player: chiptune_player) -> c_int;
 }
 

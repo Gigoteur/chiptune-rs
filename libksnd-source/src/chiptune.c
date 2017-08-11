@@ -222,7 +222,9 @@ KLYSAPI void Chiptune_PlayMusic(ChiptunePlayer *player, ChiptuneSong *song, int 
 
 KLYSAPI void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int chan, unsigned short note, int panning)
 {
-	//player->cyd_sound.wavetable_entries = sound->wavetable_entries;
+	player->cyd_sound.wavetable_entries = sound->wavetable_entries;
+	cyd_set_callback(&player->cyd_sound, mus_advance_tick, &player->mus_sound, 100);
+
     mus_trigger_instrument(&player->mus_sound, chan, &sound->sound, note, panning);
 }
 
@@ -283,13 +285,25 @@ KLYSAPI void Chiptune_PauseSound(ChiptunePlayer *player, int state)
 }
 
 
-KLYSAPI int Chiptune_GetPlayPosition(ChiptunePlayer *player)
+KLYSAPI int Chiptune_GetMusicPlayPosition(ChiptunePlayer *player)
 {
 	int song_position = 0;
 	
 	mus_poll_status(&player->mus_music, &song_position, NULL, NULL, NULL, NULL, NULL, NULL);
 	
 	return song_position;
+}
+
+KLYSAPI int Chiptune_GetSoundPlayPosition(ChiptunePlayer *player)
+{
+	cyd_lock(&player->cyd_sound, 1);
+
+	MusChannel *chn = &player->mus_sound.channel[0];
+	int value = chn->program_tick;
+
+	cyd_lock(&player->cyd_sound, 0);
+
+	return value;
 }
 
 

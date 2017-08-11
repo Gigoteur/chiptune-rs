@@ -981,13 +981,13 @@ static void mus_exec_track_command(MusEngine *mus, int chan, int first_tick)
 
 
 static void mus_exec_prog_tick(MusEngine *mus, int chan, int advance)
-{
+{		
 	MusChannel *chn = &mus->channel[chan];
 	int tick = chn->program_tick;
 	int visited[MUS_PROG_LEN] = { 0 };
 	
 	do_it_again:;
-	
+
 	const Uint16 inst = chn->instrument->program[tick];
 	
 	switch (inst)
@@ -1067,7 +1067,7 @@ static void mus_exec_prog_tick(MusEngine *mus, int chan, int advance)
 			tick = 0;
 		}
 	}
-	
+
 	// skip to next on msb
 	
 	if ((inst & 0x8000) && inst != MUS_FX_NOP && !dont_reloop)
@@ -1078,6 +1078,7 @@ static void mus_exec_prog_tick(MusEngine *mus, int chan, int advance)
 	if (advance) 
 	{
 		chn->program_tick = tick;
+//		printf("LA %x %d %d\n", chn, chan, tick);
 	}
 }
 
@@ -1328,7 +1329,6 @@ static void mus_advance_channel(MusEngine* mus, int chan)
 	}
 		
 	++chn->current_tick;
-	
 	if (mus->channel[chan].flags & MUS_CHN_PROGRAM_RUNNING)
 	{
 		int u = (chn->program_counter + 1) >= chn->prog_period;
@@ -1424,7 +1424,6 @@ Uint32 mus_ext_sync(MusEngine *mus)
 int mus_advance_tick(void* udata)
 {
 	MusEngine *mus = udata;
-	
 	if (!(mus->flags & MUS_EXT_SYNC))
 		mus->ext_sync_ticks = 1;
 	
@@ -1609,7 +1608,6 @@ int mus_advance_tick(void* udata)
 				}
 			}
 		}
-		
 		for (int i = 0 ; i < mus->cyd->n_channels ; ++i)
 		{
 			if (mus->channel[i].flags & MUS_CHN_PLAYING) 

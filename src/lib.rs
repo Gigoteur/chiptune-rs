@@ -143,9 +143,15 @@ impl Chiptune {
     }
   }
 
-  pub fn get_position(&mut self) -> c_int {
+  pub fn get_music_position(&mut self) -> c_int {
     unsafe {
-      return ffi::Chiptune_GetPlayPosition(self.P);
+      return ffi::Chiptune_GetMusicPlayPosition(self.P);
+    }
+  }
+
+  pub fn get_sound_position(&mut self) -> c_int {
+    unsafe {
+      return ffi::Chiptune_GetSoundPlayPosition(self.P);
     }
   }
 
