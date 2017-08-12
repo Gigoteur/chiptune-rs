@@ -140,9 +140,9 @@ KLYSAPI extern void Chiptune_FreePlayer(ChiptunePlayer *player);
  * Start playing song @c song from position @c start_position (measured in pattern rows)
  */
 KLYSAPI extern void Chiptune_PlayMusic(ChiptunePlayer *player, ChiptuneSong *song, int start_position);
-KLYSAPI extern void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int chan, unsigned short note, int panning);
+KLYSAPI extern void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int chan, unsigned short note, int panning, int rate);
 
-KLYSAPI void Chiptune_GetSoundInfo(ChiptuneSound *sound);
+KLYSAPI extern void Chiptune_GetSoundInfo(ChiptuneSound *sound);
 
 /**
  * Stop playback on a player context.
@@ -215,7 +215,7 @@ KLYSAPI extern void Chiptune_SetLooping(ChiptunePlayer *player, int looping);
  * @return current playback position measured in pattern rows
  */
 KLYSAPI extern int Chiptune_GetMusicPlayPosition(ChiptunePlayer* player);
-KLYSAPI extern int Chiptune_GetSoundPlayPosition(ChiptunePlayer* player);
+KLYSAPI extern int Chiptune_GetSoundPlayPosition(ChiptunePlayer *player, int chan);
 
 /**
  * Get the current envelope values for each player channel.

@@ -1078,7 +1078,6 @@ static void mus_exec_prog_tick(MusEngine *mus, int chan, int advance)
 	if (advance) 
 	{
 		chn->program_tick = tick;
-//		printf("LA %x %d %d\n", chn, chan, tick);
 	}
 }
 

@@ -211,6 +211,7 @@ KLYSAPI void Chiptune_FreePlayer(ChiptunePlayer *player)
 KLYSAPI void Chiptune_PlayMusic(ChiptunePlayer *player, ChiptuneSong *song, int start_position)
 {
 	player->cyd_music.wavetable_entries = song->wavetable_entries;
+	printf("RATE %d", song->song.song_rate);
 	cyd_set_callback(&player->cyd_music, mus_advance_tick, &player->mus_music, song->song.song_rate);
 	mus_set_fx(&player->mus_music, &song->song);
 	
@@ -220,10 +221,10 @@ KLYSAPI void Chiptune_PlayMusic(ChiptunePlayer *player, ChiptuneSong *song, int 
 	mus_set_song(&player->mus_music, &song->song, start_position);
 }
 
-KLYSAPI void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int chan, unsigned short note, int panning)
+KLYSAPI void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int chan, unsigned short note, int panning, int rate)
 {
 	player->cyd_sound.wavetable_entries = sound->wavetable_entries;
-	cyd_set_callback(&player->cyd_sound, mus_advance_tick, &player->mus_sound, 100);
+	cyd_set_callback(&player->cyd_sound, mus_advance_tick, &player->mus_sound, rate);
 
     mus_trigger_instrument(&player->mus_sound, chan, &sound->sound, note, panning);
 }
@@ -294,11 +295,18 @@ KLYSAPI int Chiptune_GetMusicPlayPosition(ChiptunePlayer *player)
 	return song_position;
 }
 
-KLYSAPI int Chiptune_GetSoundPlayPosition(ChiptunePlayer *player)
+KLYSAPI int Chiptune_GetSoundPlayPosition(ChiptunePlayer *player, int chan)
 {
+	if (chan >= MUS_MAX_CHANNELS) {
+		return -1;
+	}
+	
 	cyd_lock(&player->cyd_sound, 1);
 
-	MusChannel *chn = &player->mus_sound.channel[0];
+	MusChannel *chn = &player->mus_sound.channel[chan];
+	if (chn == NULL) {
+		return -1;
+	}
 	int value = chn->program_tick;
 
 	cyd_lock(&player->cyd_sound, 0);
