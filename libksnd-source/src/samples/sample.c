@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     printf("Pause sound\n");	
 	Chiptune_PauseMusic(player, 1);
     sleep(3);
-    Chiptune_PlaySound(player, sound2, 1, 1, CYD_PAN_CENTER, 50);
+    Chiptune_PlaySound(player, sound2, 1, 10000, CYD_PAN_CENTER, 50);
     
     printf("Resume sound\n");	
 	Chiptune_PauseMusic(player, 0);

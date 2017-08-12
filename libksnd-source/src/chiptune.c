@@ -225,7 +225,6 @@ KLYSAPI void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, in
 {
 	player->cyd_sound.wavetable_entries = sound->wavetable_entries;
 	cyd_set_callback(&player->cyd_sound, mus_advance_tick, &player->mus_sound, rate);
-
     mus_trigger_instrument(&player->mus_sound, chan, &sound->sound, note, panning);
 }
 
