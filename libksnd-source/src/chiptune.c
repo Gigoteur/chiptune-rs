@@ -45,6 +45,8 @@ KLYSAPI ChiptunePlayer* Chiptune_CreatePlayer(int sample_rate)
 	cyd_register(&player->cyd_sound);
 #endif
 	
+	cyd_reserve_channels(&player->cyd_sound, 16);
+
 	return player;
 }
 
@@ -65,10 +67,6 @@ KLYSAPI ChiptunePlayer* Chiptune_CreatePlayerUnregistered(int sample_rate)
     // Sound
     cyd_init(&player->cyd_sound, sample_rate, 1);
 	mus_init_engine(&player->mus_sound, &player->cyd_sound);
-	
-	// Each song has its own wavetable array so let's free this
-	free(player->cyd_sound.wavetable_entries); 
-	player->cyd_sound.wavetable_entries = NULL;
 
 	return player;
 }
@@ -97,14 +95,14 @@ KLYSAPI ChiptuneSong* Chiptune_LoadMusic(ChiptunePlayer* player, const char *pat
 KLYSAPI ChiptuneSound* Chiptune_LoadSound(ChiptunePlayer* player, const char *path)
 {
     ChiptuneSound *sound = calloc(sizeof(*sound), 1);
-	
+	/*
 	int i = 0;
 	for (i = 0 ; i < CYD_WAVE_MAX_ENTRIES ; ++i)
 	{
 		cyd_wave_entry_init(&sound->wavetable_entries[i], NULL, 0, 0, 0, 0, 0);
-	}
+	}*/
 	
-	if (mus_load_instrument(path, &sound->sound, sound->wavetable_entries))
+	if (mus_load_instrument(path, &sound->sound, NULL))//sound->wavetable_entries))
 	{
 		return sound;
 	}
@@ -211,7 +209,6 @@ KLYSAPI void Chiptune_FreePlayer(ChiptunePlayer *player)
 KLYSAPI void Chiptune_PlayMusic(ChiptunePlayer *player, ChiptuneSong *song, int start_position)
 {
 	player->cyd_music.wavetable_entries = song->wavetable_entries;
-	printf("RATE %d", song->song.song_rate);
 	cyd_set_callback(&player->cyd_music, mus_advance_tick, &player->mus_music, song->song.song_rate);
 	mus_set_fx(&player->mus_music, &song->song);
 	
@@ -223,7 +220,7 @@ KLYSAPI void Chiptune_PlayMusic(ChiptunePlayer *player, ChiptuneSong *song, int 
 
 KLYSAPI void Chiptune_PlaySound(ChiptunePlayer *player, ChiptuneSound *sound, int chan, unsigned short note, int panning, int rate)
 {
-	player->cyd_sound.wavetable_entries = sound->wavetable_entries;
+	//player->cyd_sound.wavetable_entries = sound->wavetable_entries;
 	cyd_set_callback(&player->cyd_sound, mus_advance_tick, &player->mus_sound, rate);
     mus_trigger_instrument(&player->mus_sound, chan, &sound->sound, note, panning);
 }
@@ -265,8 +262,6 @@ KLYSAPI void Chiptune_StopSound(ChiptunePlayer *player)
 	cyd_set_callback(&player->cyd_sound, NULL, NULL, 1);
 	player->cyd_sound.wavetable_entries = NULL;
 }
-
-
 
 KLYSAPI void Chiptune_Pause(ChiptunePlayer *player, int state)
 {

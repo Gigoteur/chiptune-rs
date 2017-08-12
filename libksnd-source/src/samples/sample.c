@@ -37,29 +37,26 @@ int main(int argc, char *argv[]) {
 	sleep(1);
     printf("MUSIC POSITION %d\n", Chiptune_GetMusicPlayPosition(player));
 
-    printf("Play Sound\n");	
-	Chiptune_PlaySound(player, sound, 0, 10000, CYD_PAN_CENTER, 50);
-	printf("[E] Play Sound\n");
+    printf("Play Sound 1\n");	
+	Chiptune_PlaySound(player, sound, -1, 10000, CYD_PAN_CENTER, 50);
     printf("SOUND POSITION %d\n", Chiptune_GetSoundPlayPosition(player, 0));
-    
-    printf("SOUND POSITION %d\n", Chiptune_GetSoundPlayPosition(player, 0));
-    
+        
     sleep(1);
-
-    printf("Change volume\n");	    
-    Chiptune_SetVolume(player, 64);    
 
     printf("SOUND POSITION %d\n", Chiptune_GetSoundPlayPosition(player, 0));
     
     printf("Pause sound\n");	
 	Chiptune_PauseMusic(player, 1);
     sleep(3);
-    Chiptune_PlaySound(player, sound2, 1, 10000, CYD_PAN_CENTER, 50);
+    printf("Play Sound 2\n");    
+    Chiptune_PlaySound(player, sound2, -1, 10000, CYD_PAN_CENTER, 50);
     
+    sleep(2);
     printf("Resume sound\n");	
 	Chiptune_PauseMusic(player, 0);
 
-    Chiptune_SetVolume(player, 128);
+    printf("Change volume\n");	    
+    Chiptune_SetVolume(player, 64);    
 
 	sleep(5);
 
