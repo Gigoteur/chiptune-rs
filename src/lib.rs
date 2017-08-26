@@ -7,7 +7,7 @@ use std::ffi::CString;
 use libc::{c_int, c_ushort};
 use sdl2::mixer;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum ChiptuneError {
     LoadingError,
 }
