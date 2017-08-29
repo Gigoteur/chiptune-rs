@@ -1,5 +1,8 @@
 pub mod ffi;
 
+#[macro_use]
+extern crate lazy_static;
+
 extern crate libc;
 extern crate sdl2;
 
@@ -10,6 +13,7 @@ use sdl2::mixer;
 #[derive(Debug, Clone, Copy)]
 pub enum ChiptuneError {
     LoadingError,
+    InstructionError,
 }
 
 
@@ -30,9 +34,177 @@ pub struct ChiptuneSound {
 }
 
 pub use ffi::{
-  CYD_PAN_CENTER, CYD_PAN_LEFT, CYD_PAN_RIGHT
+  CYD_PAN_CENTER, CYD_PAN_LEFT, CYD_PAN_RIGHT, CYD_CUTOFF_MAX, CYD_MAX_FX_CHANNELS, CYD_WAVE_MAX_ENTRIES, MAX_VOLUME,
+  FREQ_TAB_SIZE,
+  MUS_FX_ARPEGGIO,
+  MUS_FX_ARPEGGIO_ABS,
+  MUS_FX_SET_EXT_ARP,
+  MUS_FX_PORTA_UP,
+  MUS_FX_PORTA_DN,
+  MUS_FX_PORTA_UP_LOG,
+  MUS_FX_PORTA_DN_LOG,
+  MUS_FX_SLIDE,
+  MUS_FX_VIBRATO,
+  MUS_FX_FADE_VOLUME,
+  MUS_FX_SET_VOLUME,
+  MUS_FX_LOOP_PATTERN,
+  MUS_FX_SKIP_PATTERN,
+  MUS_FX_EXT,
+  MUS_FX_EXT_PORTA_UP,
+  MUS_FX_EXT_PORTA_DN,
+  MUS_FX_EXT_RETRIGGER,
+  MUS_FX_EXT_FADE_VOLUME_DN,
+  MUS_FX_EXT_FADE_VOLUME_UP,
+  MUS_FX_EXT_NOTE_CUT,
+  MUS_FX_EXT_NOTE_DELAY,
+  MUS_FX_SET_SPEED,
+  MUS_FX_SET_RATE,
+  MUS_FX_PORTA_UP_SEMI,
+  MUS_FX_PORTA_DN_SEMI,
+  MUS_FX_SET_PANNING,
+  MUS_FX_PAN_LEFT,
+  MUS_FX_PAN_RIGHT,
+  MUS_FX_FADE_GLOBAL_VOLUME,
+  MUS_FX_SET_GLOBAL_VOLUME,
+  MUS_FX_SET_CHANNEL_VOLUME,
+  MUS_FX_CUTOFF_UP,
+  MUS_FX_CUTOFF_DN,
+  MUS_FX_CUTOFF_SET,
+  MUS_FX_RESONANCE_SET,
+  MUS_FX_FILTER_TYPE,
+  MUS_FX_CUTOFF_SET_COMBINED,
+  MUS_FX_BUZZ_UP,
+  MUS_FX_BUZZ_DN,
+  MUS_FX_BUZZ_SHAPE,
+  MUS_FX_BUZZ_SET,
+  MUS_FX_BUZZ_SET_SEMI,
+  MUS_FX_FM_SET_MODULATION,
+  MUS_FX_FM_SET_FEEDBACK,
+  MUS_FX_FM_SET_HARMONIC,
+  MUS_FX_FM_SET_WAVEFORM,
+  MUS_FX_PW_DN,
+  MUS_FX_PW_UP,
+  MUS_FX_PW_SET,
+  MUS_FX_SET_WAVEFORM,
+  MUS_FX_SET_FXBUS,
+  MUS_FX_SET_SYNCSRC,
+  MUS_FX_SET_RINGSRC,
+  MUS_FX_SET_WAVETABLE_ITEM,
+  MUS_FX_SET_DOWNSAMPLE,
+  MUS_FX_WAVETABLE_OFFSET,
+  MUS_FX_CUTOFF_FINE_SET,
+  MUS_FX_END,
+  MUS_FX_JUMP,
+  MUS_FX_LABEL,
+  MUS_FX_LOOP,
+  MUS_FX_TRIGGER_RELEASE,
+  MUS_FX_RESTART_PROGRAM,
+  MUS_FX_NOP,
 };
 
+#[derive(Debug, Clone)]
+pub struct ChiptuneInstruction {
+  opcode: c_int,
+  mask: c_int,
+  name: String,
+  shortname: String,
+  minv: c_int,
+  maxv: c_int,
+}
+
+impl ChiptuneInstruction {
+  pub fn new(opcode: c_int, mask: c_int, name: &str, shortname: &str, minv: c_int, maxv: c_int) -> ChiptuneInstruction {
+    ChiptuneInstruction{
+      opcode: opcode,
+      mask: mask,
+      name: String::from(name),
+      shortname: String::from(shortname),
+      minv: minv,
+      maxv: maxv,
+     }
+  }
+}
+
+lazy_static! {
+    static ref INSTRUCTION_DESC: [ChiptuneInstruction; 63] = {
+        let m : [ChiptuneInstruction; 63] = [
+        ChiptuneInstruction::new(MUS_FX_END, 0xffff, "Program end", "PrgEnd", 0, 0),
+        ChiptuneInstruction::new(MUS_FX_NOP, 0xffff, "No operation", "Nop", 0, 0),
+        ChiptuneInstruction::new(MUS_FX_JUMP, 0xff00, "Goto", "", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_LABEL, 0xff00, "Loop begin", "Begin", 0, 0),
+        ChiptuneInstruction::new(MUS_FX_LOOP, 0xff00, "Loop end", "Loop", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_ARPEGGIO, 0x7f00, "Set arpeggio note", "Arp", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_ARPEGGIO_ABS, 0x7f00, "Set absolute arpeggio note", "AbsArp", 0, FREQ_TAB_SIZE - 1),
+        ChiptuneInstruction::new(MUS_FX_SET_EXT_ARP, 0x7f00, "Set external arpeggio notes", "ExtArp", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PORTA_UP, 0x7f00, "Portamento up", "PortUp", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PORTA_DN, 0x7f00, "Portamento down", "PortDn", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PORTA_UP_LOG, 0x7f00, "Portamento up (curve)", "PortUpC", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PORTA_DN_LOG, 0x7f00, "Portamento down (curve)", "PortDnC", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_EXT_NOTE_DELAY, 0x7ff0, "Note delay", "Delay", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_VIBRATO, 0x7f00, "Vibrato", "", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_SLIDE, 0x7f00, "Slide", "", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PORTA_UP_SEMI, 0x7f00, "Portamento up (semitones)", "PortUpST", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PORTA_DN_SEMI, 0x7f00, "Portamento down (semitones)", "PortDnST", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_CUTOFF_UP, 0x7f00, "Filter cutoff up", "CutoffUp", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_CUTOFF_DN, 0x7f00, "Filter cutoff down", "CutoffDn", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_CUTOFF_SET, 0x7f00, "Set filter cutoff", "Cutoff", 0, 0xff),
+        ChiptuneInstruction::new(MUS_FX_CUTOFF_SET_COMBINED, 0x7f00, "Set combined cutoff", "CutoffAHX", 0, 0xff),
+        ChiptuneInstruction::new(MUS_FX_RESONANCE_SET, 0x7f00, "Set filter resonance", "Resonance", 0, 3),
+        ChiptuneInstruction::new(MUS_FX_FILTER_TYPE, 0x7f00, "Set filter type", "FltType", 0, 2),
+        ChiptuneInstruction::new(MUS_FX_PW_DN, 0x7f00, "PW down", "PWDn", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PW_UP, 0x7f00, "PW up", "PWUp", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PW_SET, 0x7f00, "Set PW", "PW", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_SET_VOLUME, 0x7f00, "Set volume", "Volume", 0, 0xff),
+        ChiptuneInstruction::new(MUS_FX_FADE_GLOBAL_VOLUME, 0x7f00, "Global volume fade", "GlobFade", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_SET_GLOBAL_VOLUME, 0x7f00, "Set global volume", "GlobVol", 0, MAX_VOLUME),
+        ChiptuneInstruction::new(MUS_FX_SET_CHANNEL_VOLUME, 0x7f00, "Set channel volume", "ChnVol", 0, MAX_VOLUME),
+        ChiptuneInstruction::new(MUS_FX_SET_WAVEFORM, 0x7f00, "Set waveform", "Waveform", 0, 0xff),
+        ChiptuneInstruction::new(MUS_FX_SET_WAVETABLE_ITEM, 0x7f00, "Set wavetable item", "Wavetable", 0, CYD_WAVE_MAX_ENTRIES - 1),
+        ChiptuneInstruction::new(MUS_FX_SET_FXBUS, 0x7f00, "Set FX bus", "SetFxBus", 0, CYD_MAX_FX_CHANNELS - 1),
+        ChiptuneInstruction::new(MUS_FX_SET_RINGSRC, 0x7f00, "Set ring modulation source (FF=off)", "SetRingSrc", 0, 0xff),
+        ChiptuneInstruction::new(MUS_FX_SET_SYNCSRC, 0x7f00, "Set sync source (FF=off)", "SetSyncSrc", 0, 0xff),
+        ChiptuneInstruction::new(MUS_FX_SET_DOWNSAMPLE, 0x7f00, "Set downsample", "SetDnSmp", 0, 0xff),
+        ChiptuneInstruction::new(MUS_FX_SET_SPEED, 0x7f00, "Set speed", "Speed", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_SET_RATE, 0x7f00, "Set rate", "Rate", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_LOOP_PATTERN, 0x7f00, "Loop pattern", "PatLoop", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_SKIP_PATTERN, 0x7f00, "Skip pattern", "PatSkip", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_TRIGGER_RELEASE, 0x7f00, "Trigger release", "Release", 0, 0xff),
+        ChiptuneInstruction::new(MUS_FX_RESTART_PROGRAM, 0x7f00, "Restart program", "Restart", 0, 0),
+        ChiptuneInstruction::new(MUS_FX_FADE_VOLUME, 0x7f00, "Fade volume", "VolFade", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_EXT_FADE_VOLUME_UP, 0x7ff0, "Fine fade volume in", "VolUpFine", 0, 0xf),
+        ChiptuneInstruction::new(MUS_FX_EXT_FADE_VOLUME_DN, 0x7ff0, "Fine fade volume out", "VolDnFine", 0, 0xf),
+        ChiptuneInstruction::new(MUS_FX_EXT_PORTA_UP, 0x7ff0, "Fine portamento up", "PortUpFine", 0, 0xf),
+        ChiptuneInstruction::new(MUS_FX_EXT_PORTA_DN, 0x7ff0, "Fine portamento down", "PortDnFine", 0, 0xf),
+        ChiptuneInstruction::new(MUS_FX_EXT_NOTE_CUT, 0x7ff0, "Note cut", "NoteCut", 0, 0xf),
+        ChiptuneInstruction::new(MUS_FX_EXT_RETRIGGER, 0x7ff0, "Retrigger", "Retrig", 0, 0xf),
+        ChiptuneInstruction::new(MUS_FX_WAVETABLE_OFFSET, 0x7000, "Wavetable offset", "WaveOffs", 0, 0xfff),
+        ChiptuneInstruction::new(MUS_FX_SET_PANNING, 0x7f00, "Set panning", "SetPan", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PAN_LEFT, 0x7f00, "Pan left", "PanLeft", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_PAN_RIGHT, 0x7f00, "Pan right", "PanRight", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_BUZZ_UP, 0x7f00, "Tune buzz up", "BuzzUp", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_BUZZ_DN, 0x7f00, "Tune buzz down", "BuzzDn", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_BUZZ_SHAPE, 0x7f00, "Set buzz shape", "BuzzShape", 0, 3),
+        ChiptuneInstruction::new(MUS_FX_BUZZ_SET, 0x7f00, "Set buzz finetune", "BuzzFine", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_CUTOFF_FINE_SET, 0x7000, "Set filter cutoff (fine)", "CutFine", 0, CYD_CUTOFF_MAX - 1),
+        ChiptuneInstruction::new(MUS_FX_BUZZ_SET_SEMI, 0x7f00, "Set buzz semitone", "BuzzSemi", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_FM_SET_MODULATION, 0x7f00, "Set FM modulation", "FMMod", 0, 0x7f),
+        ChiptuneInstruction::new(MUS_FX_FM_SET_FEEDBACK, 0x7ff0, "Set FM feedback", "FMFB", 0, 7),
+        ChiptuneInstruction::new(MUS_FX_FM_SET_HARMONIC, 0x7f00, "Set FM multiplier", "Mult", 0, 255),
+        ChiptuneInstruction::new(MUS_FX_FM_SET_WAVEFORM, 0x7f00, "Set FM waveform", "FMWave", 0, 255)
+        ];
+
+        m
+    };
+}
+
+pub fn get_instruction(opcode: c_int) -> Result<ChiptuneInstruction, ChiptuneError> {
+  for instruction in INSTRUCTION_DESC.iter() {
+    if instruction.opcode == opcode & instruction.mask {
+      return Ok(instruction.clone());
+    }
+  }
+  Err(ChiptuneError::InstructionError)
+}
 
 impl Chiptune {
   pub fn new() -> Chiptune {
