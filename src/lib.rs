@@ -6,6 +6,7 @@ extern crate lazy_static;
 extern crate libc;
 extern crate sdl2;
 
+use std::cmp;
 use std::ffi::CString;
 use libc::{c_int, c_ushort};
 use sdl2::mixer;
@@ -14,6 +15,7 @@ use sdl2::mixer;
 pub enum ChiptuneError {
     LoadingError,
     InstructionError,
+    NoteError,
 }
 
 
@@ -126,11 +128,29 @@ impl ChiptuneInstruction {
 }
 
 lazy_static! {
+    static ref NOTENAME: [&'static str; 12] = {
+      let m : [&'static str; 12] = [
+        "C-",
+        "C#",
+        "D-",
+        "D#",
+        "E-",
+        "F-",
+        "F#",
+        "G-",
+        "G#",
+        "A-",
+        "A#",
+        "B-"
+      ];
+      m
+    };
+
     static ref INSTRUCTION_DESC: [ChiptuneInstruction; 63] = {
         let m : [ChiptuneInstruction; 63] = [
         ChiptuneInstruction::new(MUS_FX_END, 0xffff, "Program end", "PrgEnd", 0, 0),
         ChiptuneInstruction::new(MUS_FX_NOP, 0xffff, "No operation", "Nop", 0, 0),
-        ChiptuneInstruction::new(MUS_FX_JUMP, 0xff00, "Goto", "", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_JUMP, 0xff00, "Goto", "Goto", -1, -1),
         ChiptuneInstruction::new(MUS_FX_LABEL, 0xff00, "Loop begin", "Begin", 0, 0),
         ChiptuneInstruction::new(MUS_FX_LOOP, 0xff00, "Loop end", "Loop", -1, -1),
         ChiptuneInstruction::new(MUS_FX_ARPEGGIO, 0x7f00, "Set arpeggio note", "Arp", -1, -1),
@@ -141,8 +161,8 @@ lazy_static! {
         ChiptuneInstruction::new(MUS_FX_PORTA_UP_LOG, 0x7f00, "Portamento up (curve)", "PortUpC", -1, -1),
         ChiptuneInstruction::new(MUS_FX_PORTA_DN_LOG, 0x7f00, "Portamento down (curve)", "PortDnC", -1, -1),
         ChiptuneInstruction::new(MUS_FX_EXT_NOTE_DELAY, 0x7ff0, "Note delay", "Delay", -1, -1),
-        ChiptuneInstruction::new(MUS_FX_VIBRATO, 0x7f00, "Vibrato", "", -1, -1),
-        ChiptuneInstruction::new(MUS_FX_SLIDE, 0x7f00, "Slide", "", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_VIBRATO, 0x7f00, "Vibrato", "Vibrato", -1, -1),
+        ChiptuneInstruction::new(MUS_FX_SLIDE, 0x7f00, "Slide", "Slide", -1, -1),
         ChiptuneInstruction::new(MUS_FX_PORTA_UP_SEMI, 0x7f00, "Portamento up (semitones)", "PortUpST", -1, -1),
         ChiptuneInstruction::new(MUS_FX_PORTA_DN_SEMI, 0x7f00, "Portamento down (semitones)", "PortDnST", -1, -1),
         ChiptuneInstruction::new(MUS_FX_CUTOFF_UP, 0x7f00, "Filter cutoff up", "CutoffUp", -1, -1),
@@ -197,9 +217,33 @@ lazy_static! {
     };
 }
 
+pub fn notename(opcode: c_int, base_note: u8) -> Result<String, ChiptuneError> {
+  match get_instruction(opcode as i32) {
+      Ok(v) => {
+        if ((opcode & 0x7f00) == MUS_FX_ARPEGGIO) || ((opcode & 0x7f00) == MUS_FX_ARPEGGIO_ABS) {
+          if (opcode & 0xff) != 0xf0 && (opcode & 0xff) != 0xf1 {
+            let mut note = 0;
+            if (opcode & 0x7f00) == MUS_FX_ARPEGGIO {
+              note = base_note as i32 + (opcode & 0xff);
+            }
+            note = cmp::min(cmp::max(0, note), FREQ_TAB_SIZE - 1);
+            return Ok(format!("{}{}", NOTENAME[(note%12) as usize], note/12));
+          } else {
+            return Ok(format!("EXT{:x}", opcode & 0x0f));
+          }
+        }
+
+        return Ok(v.shortname.clone());
+      },
+      Err(e) => println!("Error {:?}", e),
+  }
+
+  Err(ChiptuneError::NoteError)
+}
+
 pub fn get_instruction(opcode: c_int) -> Result<ChiptuneInstruction, ChiptuneError> {
   for instruction in INSTRUCTION_DESC.iter() {
-    if instruction.opcode == opcode & instruction.mask {
+    if instruction.opcode == (opcode & instruction.mask) {
       return Ok(instruction.clone());
     }
   }
@@ -336,6 +380,12 @@ impl Chiptune {
         }
     }
     program
+  }
+
+  pub fn get_base_note(&mut self, sound: ChiptuneSound) -> u8 {
+    unsafe {
+      (*sound.S).base_note
+    }
   }
   
 }
