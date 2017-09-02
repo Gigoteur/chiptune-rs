@@ -131,7 +131,7 @@ extern {
   pub fn Chiptune_LoadMusic(player: chiptune_player, path: *const c_char) -> chiptune_song;
   pub fn Chiptune_PlayMusic(player: chiptune_player, son: chiptune_song,  start_position: c_int);
   pub fn Chiptune_LoadSound(player: chiptune_player, path: *const c_char) -> chiptune_sound;
-  pub fn Chiptune_PlaySound(player: chiptune_player, sound: chiptune_sound, chan: c_int, note: c_ushort, panning: c_int);
+  pub fn Chiptune_PlaySound(player: chiptune_player, sound: chiptune_sound, chan: c_int, note: c_ushort, panning: c_int, rate: c_int);
   pub fn Chiptune_Stop(player: chiptune_player);
   pub fn Chiptune_StopMusic(player: chiptune_player);
   pub fn Chiptune_StopSound(player: chiptune_player);

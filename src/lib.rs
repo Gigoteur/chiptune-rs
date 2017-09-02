@@ -299,9 +299,9 @@ impl Chiptune {
     }
   }
 
-  pub fn play_sound(&mut self, sound: &mut ChiptuneSound, chan: c_int, note: c_ushort, panning: c_int) {
+  pub fn play_sound(&mut self, sound: &mut ChiptuneSound, chan: c_int, note: c_ushort, panning: c_int, rate: c_int) {
     unsafe {
-      ffi::Chiptune_PlaySound(self.P, sound.S, chan, note, panning);
+      ffi::Chiptune_PlaySound(self.P, sound.S, chan, note, panning, rate);
     }
   }
 

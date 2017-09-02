@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     printf("[E] Load Music\n");
 
     printf("Play Music\n");	
-	Chiptune_PlayMusic(player, song, 0);
+	//Chiptune_PlayMusic(player, song, 0);
 	printf("[E] Play Music\n");
 
     printf("Load Sound\n");
