@@ -55,8 +55,14 @@ fn build_chiptune(tooling: &gcc::Tool, source: &Path, build: &Path) -> io::Resul
 
 fn prebuild() -> io::Result<()> {
 
-    let mut chiptune_dir = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
-    chiptune_dir.push(OsStr::new("libksnd-source/src").to_str().unwrap());
+    let chiptune_dir : PathBuf = match env::var_os("CHIPTUNE_LOCAL_SOURCE") {
+        Some(dir) => PathBuf::from(dir),
+        None => {
+            let mut dir = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
+            dir.push(OsStr::new("libksnd-source/src").to_str().unwrap());
+            dir
+        }
+    };
 
     let build_dir = PathBuf::from(env::var_os("OUT_DIR").unwrap());
     let mut config = gcc::Config::new();
@@ -64,7 +70,7 @@ fn prebuild() -> io::Result<()> {
     println!("cargo:rustc-link-lib=static=chiptune");
 
     // Check build_dir
-    if !build_dir.join("libchiptune.a").exists() {
+    if !chiptune_dir.join("libchiptune.a").exists() {
         // Build libchiptune.a
         let tooling = config.get_compiler();
         try!(fs::create_dir_all(&build_dir));

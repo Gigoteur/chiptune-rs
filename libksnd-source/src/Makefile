@@ -16,7 +16,7 @@ else
 endif
 
 ifdef SDL_FLAGS
-	SDLFLAGS := $(SDL_FLAGS)
+	SDLFLAGS := -I $(SDL_FLAGS)
 endif
 
 ifdef SDL_LIBS
