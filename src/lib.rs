@@ -371,6 +371,22 @@ impl Chiptune {
     }
   }
 
+  pub fn set_sound_program(&mut self, sound: ChiptuneSound, value: String, position: u32) -> bool {
+    true
+  }
+
+  pub fn set_sound_program_direct(&mut self, sound: ChiptuneSound, value: u16, position: u32) -> bool {
+    if position > ffi::MUS_PROG_LEN as u32 {
+      return false;
+    }
+    
+    unsafe {
+        (*sound.S).program[position as usize] = value;
+    }
+
+    true
+  }
+
   pub fn get_sound_program(&mut self, sound: ChiptuneSound) -> [u16; 32] {
     let mut program: [u16; 32] = [0; 32];
     

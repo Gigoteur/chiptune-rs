@@ -7,8 +7,16 @@ AR= ar rcu
 RANLIB= ranlib
 RM= rm -f
 
-SDLFLAGS = `sdl2-config --cflags` -U_FORTIFY_SOURCE
-INCLUDEFLAGS= $(SDLFLAGS) -I ./
+
+ifdef COMSPEC
+	SDLFLAGS := -I c:/mingw/include/SDL2
+	SDLLIBS :=  -lSDL2main -lSDL2 -lSDL2_image -lwinmm
+else
+	SDLFLAGS := `sdl2-config --cflags` -U_FORTIFY_SOURCE
+	SDLLIBS := `sdl2-config --libs` -lSDL2_mixer
+endif
+
+INCLUDEFLAGS := $(SDLFLAGS) -I ./
 CFLAGS += -O3 -Wall ${INCLUDEFLAGS} -s -D USESDLMUTEXES -D STEREOOUTPUT -D LOWRESWAVETABLE
 
 all: libchiptune.a
@@ -25,7 +33,7 @@ libchiptune.a: chiptune.o cyd.o cydchr.o cydcrush.o cydentry.o cydflt.o cydfm.o 
 
 sample: libchiptune.a
 	$(CC) -c $(CFLAGS) samples/sample.c -o samples/sample.o -I ./
-	$(CC) -o samples/sample samples/sample.o libchiptune.a -lSDL2 -lSDL2_Mixer
+	$(CC) -o samples/sample samples/sample.o libchiptune.a $(SDLLIBS)
 
 clean:
 	rm -fr libchiptune.a *.o samples/sample.o samples/sample

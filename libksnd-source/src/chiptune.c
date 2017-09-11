@@ -95,14 +95,8 @@ KLYSAPI ChiptuneSong* Chiptune_LoadMusic(ChiptunePlayer* player, const char *pat
 KLYSAPI ChiptuneSound* Chiptune_LoadSound(ChiptunePlayer* player, const char *path)
 {
     ChiptuneSound *sound = calloc(sizeof(*sound), 1);
-	/*
-	int i = 0;
-	for (i = 0 ; i < CYD_WAVE_MAX_ENTRIES ; ++i)
-	{
-		cyd_wave_entry_init(&sound->wavetable_entries[i], NULL, 0, 0, 0, 0, 0);
-	}*/
-	
-	if (mus_load_instrument(path, &sound->sound, NULL))//sound->wavetable_entries))
+
+	if (mus_load_instrument(path, &sound->sound, NULL))
 	{
 		return sound;
 	}
