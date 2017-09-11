@@ -70,13 +70,15 @@ fn prebuild() -> io::Result<()> {
     println!("cargo:rustc-link-lib=static=chiptune");
 
     // Check build_dir
-    if !chiptune_dir.join("libchiptune.a").exists() {
+    if chiptune_dir.join("libchiptune.a").exists() {
+        println!("cargo:rustc-link-search=native={}", &chiptune_dir.display());
+    } else {
         // Build libchiptune.a
         let tooling = config.get_compiler();
         try!(fs::create_dir_all(&build_dir));
         try!(build_chiptune(&tooling, &chiptune_dir, &build_dir));
+        println!("cargo:rustc-link-search=native={}", &build_dir.display());
     }
-    println!("cargo:rustc-link-search=native={}", &build_dir.display());
     
     Ok(())
 }
