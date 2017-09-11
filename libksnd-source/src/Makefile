@@ -7,13 +7,20 @@ AR= ar rcu
 RANLIB= ranlib
 RM= rm -f
 
-
 ifdef COMSPEC
 	SDLFLAGS := -I c:/mingw/include/SDL2
 	SDLLIBS :=  -lSDL2main -lSDL2 -lSDL2_image -lwinmm
 else
 	SDLFLAGS := `sdl2-config --cflags` -U_FORTIFY_SOURCE
 	SDLLIBS := `sdl2-config --libs` -lSDL2_mixer
+endif
+
+ifdef SDL_FLAGS
+	SDLFLAGS := $(SDL_FLAGS)
+endif
+
+ifdef SDL_LIBS
+	SDLLIBS := $(SDL_LIBS)
 endif
 
 INCLUDEFLAGS := $(SDLFLAGS) -I ./
