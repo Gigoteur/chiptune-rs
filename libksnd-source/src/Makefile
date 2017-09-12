@@ -1,5 +1,5 @@
-CC= gcc
-CFLAGS= -O2 -Wall -Wextra -std=gnu99
+CC=gcc
+CFLAGS= -O2 -Wall -Wextra -std=gnu99 -fPIC
 
 ECHO = echo
 MKDIR= mkdir
@@ -40,7 +40,7 @@ libchiptune.a: chiptune.o cyd.o cydchr.o cydcrush.o cydentry.o cydflt.o cydfm.o 
 
 sample: libchiptune.a
 	$(CC) -c $(CFLAGS) samples/sample.c -o samples/sample.o -I ./
-	$(CC) -o samples/sample samples/sample.o libchiptune.a $(SDLLIBS)
+	$(CC) -o samples/sample samples/sample.o libchiptune.a $(SDLLIBS) -lm
 
 clean:
 	rm -fr libchiptune.a *.o samples/sample.o samples/sample
